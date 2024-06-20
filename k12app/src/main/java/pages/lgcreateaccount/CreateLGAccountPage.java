@@ -5,6 +5,7 @@ import io.appium.java_client.pagefactory.AndroidFindBy;
 import lombok.Getter;
 import org.openqa.selenium.WebElement;
 import org.slf4j.Logger;
+import pages.enrollment.EnrollmentPage;
 import pages.ParentPortalPage;
 import utils.MyLogger;
 
@@ -21,7 +22,8 @@ public class CreateLGAccountPage extends ParentPortalPage {
     static Logger logger = MyLogger.getLogger();
 
     //input text
-    @AndroidFindBy(xpath = "//android.view.View[@text=\"First name\"]/following-sibling::android.view.View/android.widget.EditText")
+    //@AndroidFindBy(xpath = "//android.view.View[@text=\"First name\"]/following-sibling::android.view.View/android.widget.EditText")
+    @AndroidFindBy(xpath = "//*[@hint = 'First name']")
     private WebElement firstNameInput;
 
     @AndroidFindBy(xpath = "//android.view.View[@text=\"Last name\"]/following-sibling::android.view.View/android.widget.EditText")
@@ -72,6 +74,9 @@ public class CreateLGAccountPage extends ParentPortalPage {
     @AndroidFindBy(xpath = "//android.widget.ListView[@text=\"State\"]/child::android.view.View/android.widget.TextView")
     List<WebElement> statesList;
 
+    @AndroidFindBy(xpath = "//android.widget.ListView[@text=\"Contact Preference\"]")
+    List<WebElement> contactPreferenceList;
+
     @AndroidFindBy(xpath = "//android.view.View[@text=\"Phone number\"]/following::android.view.View/android.widget.EditText")
     private WebElement phoneInput;
 
@@ -80,6 +85,9 @@ public class CreateLGAccountPage extends ParentPortalPage {
 
     @AndroidFindBy(xpath = "//android.view.View[@text=\"Contact Preference\"]/following::android.view.View/android.widget.Spinner")
     private WebElement contactPreferenceDropdown;
+
+    @AndroidFindBy(xpath = "//android.widget.ListView[@text=\"Contact Preference\"]/following::android.view.View/android.widget.TextView")
+    private WebElement contactPreferenceSelector;
 
     @AndroidFindBy(uiAutomator = "new UiSelector().text(\"Sign Up\")")
     private WebElement signUpButton;
@@ -93,14 +101,14 @@ public class CreateLGAccountPage extends ParentPortalPage {
     public CreateLGAccountPage setFirstNameInput() {
         String firstName = generateRandomAlphaString(10);
         logger.info(STR."First Name = \{firstName}");
-        typeOnElement(driver, firstNameInput,firstName );
+        typeOnElement(driver, firstNameInput, firstName);
         return this;
     }
 
     public CreateLGAccountPage setLastNameInput() {
         String lastName = generateRandomAlphaString(10);
         logger.info(STR."Last Name = \{lastName}");
-        typeOnElement(driver, lastNameInput, lastName );
+        typeOnElement(driver, lastNameInput, lastName);
         return this;
     }
 
@@ -122,7 +130,7 @@ public class CreateLGAccountPage extends ParentPortalPage {
     }
 
     public CreateLGAccountPage setPasswordInput() {
-        String password =  generateRandomAlphaString(10);
+        String password = generateRandomPass(10);
         logger.info(STR."Password = \{password}");
         typeOnElement(driver, passwordInput, password);
         return this;
@@ -142,20 +150,61 @@ public class CreateLGAccountPage extends ParentPortalPage {
         return this;
     }
 
-    public CreateLGAccountPage setCountry()  {
+    public CreateLGAccountPage setCountry() {
         clickElement(driver, countrySelector);
-        if (getCountriesList().isEmpty()){
+        if (getCountriesList().isEmpty()) {
             logger.error("Country list is empty");
-        }else{
+            System.exit(1);
+        } else {
             clickElement(driver, getWebElementFromList(getCountriesList(), "UNITED STATES OF AMERICA"));
         }
-         return this;
+        return this;
     }
 
-    public Integer setState() {
+    public CreateLGAccountPage setState() {
         clickElement(driver, stateSelector);
-        clickElement(driver, getWebElementFromList(getStatesList(), "AZ"));
-        return getStatesList().size();
+        if (getStatesList().isEmpty()) {
+            logger.error("State list is empty");
+            System.exit(1);
+        } else {
+            clickElement(driver, getWebElementFromList(getStatesList(), "AZ"));
+        }
+        return this;
+    }
+
+    public CreateLGAccountPage setPhone() {
+        String phone = generateRandomNumericString(10);
+        logger.info(STR."Phone = \{phone}");
+        typeOnElement(driver, phoneInput, phone);
+        return this;
+    }
+
+    //TODO: investigate this
+    public CreateLGAccountPage setOptToReceiveMsg() {
+
+        System.out.println(contactPreferenceDropdown.getText());
+        clickElement(driver, optionCheckBox);
+        // clickElement(driver, contactPreferenceDropdown);
+        //contactPreferenceList.forEach(element -> System.out.println(element.getText()));
+        forceWait(1000);
+        //clickElement(driver, optionCheckBox);
+        clickElement(driver, optionCheckBox);
+        System.out.println(contactPreferenceDropdown.getText());
+
+        return this;
+    }
+
+    public EnrollmentPage clickOnSignUpButton(){
+       //scrollToCountry();
+       // switchForceNativeApp(driver);
+        //driver.getPageSource();
+       scrollToElement(driver, "Sign Up");
+       // System.out.println(driver.getPageSource());
+        clickElement(driver, signUpButton);
+        //signUpButton.click();
+
+        forceWait(5000);
+        return new EnrollmentPage(driver);
     }
 
 

@@ -13,6 +13,7 @@ import pages.DashboardPage;
 import pages.enrollment.EnrollmentPage;
 import pages.LoginPage;
 import pages.base.BasePage;
+import pages.enrollment.TellAboutYourStudentPage;
 import pages.lgcreateaccount.ChooseRolePage;
 import pages.lgcreateaccount.CreateLGAccountPage;
 import pages.lgcreateaccount.GettingStartedLGPage;
@@ -37,7 +38,7 @@ import static utils.GetProperty.getProperties;
 import static utils.Utils.forceWait;
 
 
-public class LGCreateAccountTest extends MobileActions {
+public class STEnrollmentTest extends MobileActions {
     private AndroidDriver driver;
     private BasePage basePage;
     static Logger logger = MyLogger.getLogger();
@@ -47,6 +48,7 @@ public class LGCreateAccountTest extends MobileActions {
     static ChooseRolePage chooseRolePage;
     static GettingStartedLGPage gettingStartedLGPage;
     static EnrollmentPage enrollmentPage;
+    static TellAboutYourStudentPage tellAboutYourStudentPage;
 
 
     @BeforeEach
@@ -100,7 +102,7 @@ public class LGCreateAccountTest extends MobileActions {
     }
 
     @Test
-    public void createLGAccount() {
+    public void createLGAccountEnrollST() {
 
         loginPage = basePage.navigateToLoginPage();
         chooseRolePage = loginPage.clickOnDontHaveAnAccountYet();
@@ -110,6 +112,7 @@ public class LGCreateAccountTest extends MobileActions {
         assertTrue(gettingStartedLGPage.isOpen());
         createLGAccountPage = gettingStartedLGPage.clickOnCreateAccountButton();
         assertTrue(createLGAccountPage.isOpen());
+        switchForceNativeApp(driver);
         enrollmentPage = createLGAccountPage
                 .setFirstNameInput()
                 .setLastNameInput()
@@ -125,9 +128,22 @@ public class LGCreateAccountTest extends MobileActions {
                 .setOptToReceiveMsg()
                 .clickOnSignUpButton()
         ;
-        //switchForceNativeApp(driver);
+
         assertNotNull(enrollmentPage);
         assertTrue(enrollmentPage.isOpen());
+
+
+        tellAboutYourStudentPage = enrollmentPage
+                .selectStudent()
+                .clickOnNextButton();
+
+        assertTrue(tellAboutYourStudentPage.isOpen());
+
+        tellAboutYourStudentPage
+                .setFirstName()
+                .setLastName();
+
+        forceWait(8000);
 
 
     }

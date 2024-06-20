@@ -39,7 +39,7 @@ public class ParentPortalBasePage extends BasePage{
         try{
             flag = isElementVisible(driver, k12HomeLogo);
         }catch (NullPointerException e){
-            logger.info(e.getMessage());
+            logger.error(e.getMessage());
         }
         return flag ;
     }
